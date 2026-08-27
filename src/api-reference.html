@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f8f6f0" />
+    <title>Melvin Rest Api — API Reference</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@700;800&family=Fira+Code:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --nb-bg: #f8f6f0;
+            --nb-card: #ffffff;
+            --nb-border: #000000;
+            --nb-yellow: #fef08a;
+            --nb-blue: #93c5fd;
+            --nb-green: #bbf7d0;
+            --nb-purple: #e9d5ff;
+            --nb-pink: #fbcfe8;
+            --nb-orange: #ff5722;
+            --nb-text: #000000;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: var(--nb-bg);
+            background-image: radial-gradient(#000000 1.2px, transparent 1.2px);
+            background-size: 20px 20px;
+            color: var(--nb-text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .font-display { font-family: 'Space Grotesk', sans-serif; }
+        .font-mono { font-family: 'Fira Code', monospace; }
+
+        .brand-rest-pill {
+            background-color: var(--nb-blue);
+            color: #000000;
+            border: 2px solid var(--nb-border);
+            border-radius: 8px;
+            padding: 0.15rem 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 800;
+            box-shadow: 2px 2px 0px #000000;
+            text-transform: uppercase;
+        }
+
+        .nb-card {
+            background-color: var(--nb-card);
+            border: 3px solid var(--nb-border);
+            border-radius: 16px;
+            box-shadow: 4px 4px 0px var(--nb-border);
+            transition: all 0.15s ease;
+        }
+
+        .nb-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: var(--nb-card);
+            border: 3px solid var(--nb-border);
+            border-radius: 12px;
+            color: var(--nb-text);
+            font-weight: 800;
+            padding: 0.6rem 1.2rem;
+            box-shadow: 3px 3px 0px var(--nb-border);
+            transition: all 0.1s ease;
+            cursor: pointer;
+        }
+        .nb-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0px var(--nb-border);
+        }
+        .nb-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px var(--nb-border);
+        }
+
+        .nb-btn-primary { background-color: var(--nb-blue); }
+        .nb-btn-yellow { background-color: var(--nb-yellow); }
+
+        .fixed-navbar {
+            position: sticky; top: 0; z-index: 50;
+            background: var(--nb-bg);
+            border-bottom: 3px solid var(--nb-border);
+        }
+
+        .brand-logo {
+            width: 38px; height: 38px;
+            object-fit: cover;
+            border: 2px solid var(--nb-border);
+            border-radius: 10px;
+            background: var(--nb-yellow);
+        }
+
+        .method-badge {
+            font-family: 'Fira Code', monospace; font-size: 0.75rem; font-weight: 800;
+            padding: 0.25rem 0.65rem; border-radius: 8px; border: 2px solid var(--nb-border);
+            text-transform: uppercase;
+            box-shadow: 2px 2px 0px var(--nb-border);
+        }
+        .method-get { background-color: var(--nb-blue); color: #000; }
+        .method-post { background-color: var(--nb-green); color: #000; }
+        .method-put { background-color: var(--nb-yellow); color: #000; }
+        .method-delete { background-color: var(--nb-pink); color: #000; }
+
+        .endpoint-row {
+            border: 3px solid var(--nb-border); border-radius: 14px; background: #ffffff;
+            box-shadow: 4px 4px 0px var(--nb-border);
+            transition: all 0.15s ease;
+        }
+        .endpoint-row:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--nb-border);
+        }
+
+        .param-chip {
+            font-family: 'Fira Code', monospace; font-size: 0.75rem;
+            background: var(--nb-yellow); border: 2px solid var(--nb-border); border-radius: 8px;
+            padding: 0.2rem 0.55rem; font-weight: 700; color: #000;
+            box-shadow: 2px 2px 0px var(--nb-border);
+        }
+        .param-chip.required { background: var(--nb-pink); }
+
+        .cat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: 2px solid var(--nb-border); border-radius: 999px; font-weight: 800; font-size: 0.85rem;
+            padding: 0.4rem 1.1rem; white-space: nowrap; cursor: pointer;
+            background: #ffffff; color: #000; transition: all 0.15s ease;
+            box-shadow: 2px 2px 0px var(--nb-border);
+        }
+        .cat-pill.active, .cat-pill:hover {
+            background: var(--nb-yellow);
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px var(--nb-border);
+        }
+
+        .sidebar-link {
+            display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.8rem; border-radius: 10px;
+            font-size: 0.85rem; font-weight: 800; color: #000; transition: all 0.15s ease;
+            border: 2px solid transparent;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            background: var(--nb-yellow);
+            border-color: var(--nb-border);
+            box-shadow: 2px 2px 0px var(--nb-border);
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        .loader {
+            width: 40px; height: 40px;
+            background-color: var(--nb-yellow);
+            border: 3px solid var(--nb-border);
+            box-shadow: 4px 4px 0px var(--nb-border);
+            animation: loaderSpin 0.8s infinite linear;
+        }
+        @keyframes loaderSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .donasi-modal {
+            position: fixed; inset: 0; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            padding: 1rem;
+        }
+        .donasi-modal.show { opacity: 1; visibility: visible; }
+        .donasi-modal-box {
+            position: relative;
+            background: #ffffff;
+            border: 3px solid var(--nb-border);
+            border-radius: 20px;
+            max-width: 400px; width: 100%;
+            padding: 1.75rem;
+            box-shadow: 8px 8px 0px var(--nb-border);
+            transform: translateY(20px);
+            transition: transform 0.2s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .donasi-modal.show .donasi-modal-box { transform: translateY(0); }
+        .donasi-close-btn {
+            position: absolute; top: 1rem; right: 1rem;
+            width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--nb-border); border-radius: 10px; background: var(--nb-yellow);
+            color: #000; cursor: pointer; font-size: 1rem; font-weight: 800;
+            box-shadow: 2px 2px 0px var(--nb-border);
+        }
+        .donasi-tabs {
+            display: flex; gap: 0.35rem; margin-bottom: 1.25rem;
+            border: 2px solid var(--nb-border); border-radius: 12px; padding: 4px; background: var(--nb-bg);
+        }
+        .donasi-tab-btn {
+            flex: 1; padding: 0.55rem 0.75rem; border-radius: 8px; border: 2px solid transparent; background: transparent;
+            color: #000; font-weight: 800; font-size: 0.8rem; cursor: pointer;
+        }
+        .donasi-tab-btn.is-active { background: var(--nb-yellow); border-color: var(--nb-border); box-shadow: 2px 2px 0px var(--nb-border); }
+        .donasi-qr-wrap {
+            background: #fff; border-radius: 14px; padding: 0.75rem; margin-bottom: 1rem;
+            display: flex; align-items: center; justify-content: center;
+            border: 3px solid var(--nb-border); box-shadow: 4px 4px 0px var(--nb-border);
+        }
+        .donasi-qr-img { width: 100%; max-width: 220px; aspect-ratio: 1 / 1; object-fit: contain; display: block; margin: 0 auto; border-radius: 8px; }
+        .donasi-account-row {
+            display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+            background: var(--nb-green); border: 2px solid var(--nb-border); border-radius: 12px; padding: 0.75rem 1rem;
+            box-shadow: 3px 3px 0px var(--nb-border);
+        }
+        .donasi-account-label { font-size: 0.7rem; color: #000; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; }
+        .donasi-account-number { font-size: 1rem; font-weight: 800; color: #000; }
+        .donasi-copy-btn {
+            flex-shrink: 0; display: flex; align-items: center; gap: 0.35rem;
+            padding: 0.5rem 0.75rem; border-radius: 8px; border: 2px solid var(--nb-border); background: #ffffff;
+            color: #000; font-size: 0.75rem; font-weight: 800; cursor: pointer;
+            box-shadow: 2px 2px 0px var(--nb-border);
+        }
+        .donasi-copy-btn:hover { background: var(--nb-yellow); }
+        .donasi-copy-btn.copied { background: var(--nb-green); }
+        .donasi-panel.hidden { display: none; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Modal Donasi -->
+    <div id="donasiModal" class="donasi-modal" role="dialog" aria-modal="true" aria-labelledby="donasiTitle">
+        <div class="donasi-modal-box">
+            <button type="button" id="donasiCloseBtn" class="donasi-close-btn" aria-label="Tutup">
+                <i class="fas fa-xmark"></i>
+            </button>
+            <h2 id="donasiTitle" class="font-display font-extrabold text-2xl mb-1">Dukung Melvin Rest Api</h2>
+            <p class="text-sm font-semibold leading-relaxed mb-4 text-gray-800">
+                Donasi kamu membantu Melvin Api tetap online dan terus berkembang. Terima kasih atas dukungannya!
+            </p>
+
+            <div class="donasi-tabs">
+                <button type="button" class="donasi-tab-btn is-active" data-country="id">Indonesia</button>
+            </div>
+
+            <div class="donasi-panel" data-country-panel="id">
+                <div class="donasi-qr-wrap">
+                    <img src="https://d.top4top.io/p_3869t7t6m1.jpg" alt="QR DANA Indonesia" class="donasi-qr-img" id="donasiQr-id">
+                </div>
+                <button type="button" class="nb-btn nb-btn-primary w-full py-2.5 text-sm mb-3 donasi-download-btn"
+                        data-download-url="https://d.top4top.io/p_3869t7t6m1.jpg" data-download-name="QR-DANA-Indonesia.jpg">
+                    <i class="fas fa-download"></i> Unduh QR
+                </button>
+                <div class="donasi-account-row">
+                    <div>
+                        <div class="donasi-account-label">DANA</div>
+                        <div class="donasi-account-number font-mono">085167997251</div>
+                    </div>
+                    <button type="button" class="donasi-copy-btn" data-copy="085167997251">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed-navbar">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2 sm:gap-3">
+                <img src="https://k.top4top.io/p_3886wxxuk1.jpg" alt="Yj Logo" class="brand-logo" onerror="this.style.display='none'">
+                <div class="flex items-center gap-1.5 font-display font-extrabold text-xl">
+                    <span>Melvin</span>
+                    <span class="brand-rest-pill">REST API</span>
+                </div>
+            </a>
+            
+            <!-- Desktop Navbar -->
+            <div class="hidden md:flex items-center gap-6">
+                <button type="button" data-donasi-open class="font-bold text-sm hover:underline flex items-center gap-1.5" style="background:none; border:none; cursor:pointer;">
+                    <i class="fas fa-heart text-red-500"></i> Donasi
+                </button>
+                <a href="/docs" class="nb-btn nb-btn-primary py-2 px-4 text-xs font-extrabold">
+                    <i class="fas fa-book"></i> Open Docs
+                </a>
+            </div>
+
+            <!-- Mobile Navbar -->
+            <div class="md:hidden flex items-center gap-2">
+                <button type="button" data-donasi-open class="nb-btn nb-btn-yellow py-2 px-3 text-xs" aria-label="Donasi">
+                    <i class="fas fa-heart text-red-500"></i>
+                </button>
+                <a href="/docs" class="nb-btn nb-btn-primary py-2 px-3 text-xs font-extrabold">
+                    Open Docs
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content Container -->
+    <div class="max-w-7xl mx-auto px-4 py-10">
+        <div class="mb-8">
+            <h1 class="font-display font-extrabold text-4xl sm:text-5xl mb-2">API Reference</h1>
+            <p class="font-semibold text-sm sm:text-base max-w-2xl text-gray-800">
+                Daftar lengkap endpoint Melvin Rest Api v1.0. Klik baris untuk melihat parameter dan contoh request.
+                Untuk pengujian langsung secara interaktif, kunjungi halaman <a href="/docs" class="font-extrabold underline decoration-2 decoration-black">Playground</a>.
+            </p>
+        </div>
+
+        <!-- Filter & Search Controls -->
+        <div class="mb-6 flex flex-col sm:flex-row gap-3">
+            <input id="searchInput" type="text" placeholder="Cari endpoint, path, kategori..."
+                   class="flex-1 border-3 border-black rounded-xl px-4 py-3 text-sm font-bold bg-white text-black shadow-[4px_4px_0px_#000] focus:outline-none">
+            <select id="methodFilter"
+                    class="border-3 border-black rounded-xl px-4 py-3 text-sm font-extrabold bg-white text-black shadow-[4px_4px_0px_#000] focus:outline-none">
+                <option value="">Semua Metode</option>
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="DELETE">DELETE</option>
+            </select>
+        </div>
+
+        <div id="catPills" class="flex gap-2 overflow-x-auto pb-3 mb-6"></div>
+
+        <!-- Loading State -->
+        <div id="loading" class="flex flex-col items-center justify-center py-20 gap-4">
+            <div class="loader"></div>
+            <p class="text-sm font-extrabold">Memuat endpoint...</p>
+        </div>
+
+        <!-- Main Workspace -->
+        <div id="content" class="hidden grid lg:grid-cols-[260px_1fr] gap-8">
+            <aside class="hidden lg:block">
+                <div class="sticky top-24 nb-card p-4">
+                    <p class="text-xs font-extrabold uppercase tracking-wider mb-3 px-1">Kategori</p>
+                    <nav id="sidebarNav" class="space-y-1 max-h-[65vh] overflow-y-auto pr-1"></nav>
+                    <div class="mt-6 p-3 border-2 border-black rounded-xl text-xs font-bold bg-[var(--nb-purple)] shadow-[2px_2px_0px_#000]">
+                        <p class="font-extrabold mb-1">Base URL</p>
+                        <code id="baseUrl" class="font-mono text-[11px] break-all bg-white px-2 py-1 rounded border border-black block mb-2"></code>
+                        <p class="font-extrabold mb-1">Apikey Demo</p>
+                        <code class="font-mono bg-white px-1.5 py-0.5 rounded border border-black">mlvn</code> / <code class="font-mono bg-white px-1.5 py-0.5 rounded border border-black">1</code>
+                    </div>
+                </div>
+            </aside>
+
+            <main>
+                <div id="endpointList" class="space-y-6"></div>
+                <div id="emptyState" class="hidden text-center py-16 nb-card">
+                    <p class="font-display font-extrabold text-xl mb-2">Tidak ada hasil ditemukan</p>
+                    <p class="text-sm font-semibold text-gray-700">Coba gunakan kata kunci lain atau reset filter pencarian Anda.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t-3 border-black py-8 mt-16 bg-[var(--nb-yellow)]">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <img src="https://k.top4top.io/p_3886wxxuk1.jpg" alt="Melvin Logo" class="brand-logo" style="width:30px;height:30px;" onerror="this.style.display='none'">
+                <span class="font-mono text-xs sm:text-sm font-extrabold">© 2026 Melvin Rest Api v1.0 · @viñn. - t.me/luyatiem</span>
+            </div>
+            <div class="flex gap-4 text-sm font-extrabold">
+                <a href="/" class="hover:underline">Home</a>
+                <a href="/docs" class="hover:underline">Open Docs</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function () {
+            const modal = document.getElementById('donasiModal');
+            if (!modal) return;
+            const closeBtn = document.getElementById('donasiCloseBtn');
+            const openBtns = document.querySelectorAll('[data-donasi-open]');
+            const tabBtns = modal.querySelectorAll('.donasi-tab-btn');
+            const panels = modal.querySelectorAll('.donasi-panel');
+
+            function openModal() {
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeModal() {
+                modal.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+            openBtns.forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    openModal();
+                });
+            });
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) closeModal();
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+            });
+
+            tabBtns.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const country = btn.getAttribute('data-country');
+                    tabBtns.forEach(function (b) { b.classList.toggle('is-active', b === btn); });
+                    panels.forEach(function (p) {
+                        p.classList.toggle('hidden', p.getAttribute('data-country-panel') !== country);
+                    });
+                });
+            });
+
+            function fallbackCopy(text, cb) {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                try { document.execCommand('copy'); } catch (e) {}
+                document.body.removeChild(ta);
+                if (cb) cb();
+            }
+
+            function downloadImage(url, filename, btn) {
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengunduh...';
+                btn.disabled = true;
+                fetch(url, { mode: 'cors' })
+                    .then(function (res) {
+                        if (!res.ok) throw new Error('fetch failed');
+                        return res.blob();
+                    })
+                    .then(function (blob) {
+                        const blobUrl = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = blobUrl;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        setTimeout(function () { URL.revokeObjectURL(blobUrl); }, 4000);
+                        btn.innerHTML = '<i class="fas fa-check"></i> Terunduh';
+                        setTimeout(function () { btn.innerHTML = originalHTML; btn.disabled = false; }, 1800);
+                    })
+                    .catch(function () {
+                        window.open(url, '_blank');
+                        btn.innerHTML = originalHTML;
+                        btn.disabled = false;
+                    });
+            }
+
+            modal.querySelectorAll('.donasi-download-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const url = btn.getAttribute('data-download-url');
+                    const filename = btn.getAttribute('data-download-name') || 'qr.jpg';
+                    downloadImage(url, filename, btn);
+                });
+            });
+
+            modal.querySelectorAll('.donasi-copy-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const text = btn.getAttribute('data-copy');
+                    const original = btn.innerHTML;
+                    function done() {
+                        btn.innerHTML = '<i class="fas fa-check"></i> Disalin';
+                        btn.classList.add('copied');
+                        setTimeout(function () {
+                            btn.innerHTML = original;
+                            btn.classList.remove('copied');
+                        }, 1800);
+                    }
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text, done); });
+                    } else {
+                        fallbackCopy(text, done);
+                    }
+                });
+            });
+        })();
+
+        let allCategories = [];
+        let activeCategory = 'all';
+        const base = window.location.origin;
+        document.getElementById('baseUrl').textContent = base;
+
+        const categoryIcons = {
+            'Bypass': 'fas fa-bolt',
+            'Premium': 'fas fa-crown',
+            'Downloader': 'fas fa-download',
+            'Imagecreator': 'fas fa-image',
+            'AI': 'fas fa-robot',
+            'Random': 'fas fa-shuffle',
+            'Search': 'fas fa-magnifying-glass',
+            'Stalker': 'fas fa-user-secret',
+            'Tools': 'fas fa-screwdriver-wrench',
+            'Orderkuota': 'fas fa-sim-card',
+            'AI Tools': 'fas fa-brain',
+            'Entertainment': 'fas fa-gamepad',
+            'Utilities': 'fas fa-gears',
+            'Social Media': 'fas fa-share-nodes',
+            'Canvas': 'fas fa-paintbrush'
+        };
+
+        const getCategoryIcon = (catName) => {
+            return categoryIcons[catName] || 'fas fa-folder';
+        };
+
+        const methodClass = (m) => {
+            const u = (m || 'GET').toUpperCase();
+            if (u === 'POST') return 'method-post';
+            if (u === 'PUT') return 'method-put';
+            if (u === 'DELETE') return 'method-delete';
+            return 'method-get';
+        };
+
+        const fallbackData = [
+            {
+                name: "Downloader",
+                items: [
+                    { name: "AIO Downloader", method: "GET", path: "/api/download/aio", description: "Download media dari berbagai platform sosial media.", parameters: { url: { type: "string", required: true, example: "https://tiktok.com/..." }, apikey: { type: "string", required: true, example: "mlvn" } } }
+                ]
+            },
+            {
+                name: "Tools",
+                items: [
+                    { name: "Temp Mail", method: "GET", path: "/api/tools/tempmail", description: "Buat email sementara.", parameters: { apikey: { type: "string", required: true, example: "mlvn" } } }
+                ]
+            }
+        ];
+
+        async function loadData() {
+            try {
+                const res = await fetch('/settings');
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+                if (data && data.categories && data.categories.length > 0) {
+                    allCategories = data.categories.map(c => ({
+                        name: c.name,
+                        items: (c.items || []).slice().sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+                    })).sort((a, b) => a.name.localeCompare(b.name));
+                } else {
+                    allCategories = fallbackData;
+                }
+            } catch (e) {
+                allCategories = fallbackData;
+            }
+
+            renderPills();
+            renderSidebar();
+            renderList();
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('content').classList.remove('hidden');
+        }
+
+        function renderPills() {
+            const el = document.getElementById('catPills');
+            el.innerHTML = `<button class="cat-pill active" data-cat="all"><i class="fas fa-layer-group"></i> Semua</button>` +
+                allCategories.map(c =>
+                    `<button class="cat-pill" data-cat="${escapeAttr(c.name)}"><i class="${getCategoryIcon(c.name)}"></i> ${escapeHtml(c.name)}</button>`
+                ).join('');
+            el.querySelectorAll('.cat-pill').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    activeCategory = btn.dataset.cat;
+                    el.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderList();
+                });
+            });
+        }
+
+        function renderSidebar() {
+            const nav = document.getElementById('sidebarNav');
+            nav.innerHTML = `<a href="#top" class="sidebar-link active" data-cat="all"><i class="fas fa-layer-group"></i> Semua Endpoint</a>` +
+                allCategories.map(c =>
+                    `<a href="#cat-${slug(c.name)}" class="sidebar-link" data-cat="${escapeAttr(c.name)}"><i class="${getCategoryIcon(c.name)}"></i> ${escapeHtml(c.name)} <span class="opacity-70 text-xs ml-auto">(${c.items.length})</span></a>`
+                ).join('');
+            nav.querySelectorAll('.sidebar-link').forEach(a => {
+                a.addEventListener('click', (e) => {
+                    const cat = a.dataset.cat;
+                    activeCategory = cat;
+                    document.querySelectorAll('.cat-pill').forEach(b => {
+                        b.classList.toggle('active', b.dataset.cat === cat);
+                    });
+                    renderList();
+                });
+            });
+        }
+
+        function getFiltered() {
+            const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+            const method = document.getElementById('methodFilter').value;
+            return allCategories.map(cat => {
+                if (activeCategory !== 'all' && cat.name !== activeCategory) return null;
+                let items = cat.items;
+                if (method) items = items.filter(i => (i.method || 'GET').toUpperCase() === method);
+                if (q) {
+                    items = items.filter(i =>
+                        (i.name || '').toLowerCase().includes(q) ||
+                        (i.path || '').toLowerCase().includes(q) ||
+                        (i.description || '').toLowerCase().includes(q) ||
+                        cat.name.toLowerCase().includes(q)
+                    );
+                }
+                if (!items.length) return null;
+                return { ...cat, items };
+            }).filter(Boolean);
+        }
+
+        function renderList() {
+            const filtered = getFiltered();
+            const list = document.getElementById('endpointList');
+            const empty = document.getElementById('emptyState');
+            if (!filtered.length) {
+                list.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+            list.innerHTML = filtered.map(cat => {
+                const rows = cat.items.map((item, idx) => {
+                    const method = (item.method || 'GET').toUpperCase();
+                    const params = item.parameters || {};
+                    const paramKeys = Object.keys(params);
+                    const paramHtml = paramKeys.length
+                        ? paramKeys.map(k => {
+                            const p = params[k] || {};
+                            const req = p.required !== false;
+                            return `<span class="param-chip ${req ? 'required' : ''}" title="${escapeAttr(p.type || 'string')}${p.example ? ' · contoh: ' + p.example : ''}">${escapeHtml(k)}${req ? ' *' : ''}</span>`;
+                        }).join(' ')
+                        : '<span class="text-xs text-gray-600 font-bold">tanpa parameter</span>';
+
+                    const exampleQs = paramKeys
+                        .map(k => {
+                            const p = params[k] || {};
+                            const ex = p.example || (k === 'apikey' ? 'mlvn' : `{${k}}`);
+                            return `${encodeURIComponent(k)}=${encodeURIComponent(ex)}`;
+                        })
+                        .join('&');
+                    const exampleUrl = base + (item.path || '') + (exampleQs ? '?' + exampleQs : '');
+
+                    const id = `ep-${slug(cat.name)}-${idx}`;
+                    return `
+                    <div class="endpoint-row mb-4" id="${id}">
+                        <button type="button" class="w-full text-left px-4 py-3.5 flex items-start gap-3 toggle-ep cursor-pointer" data-target="${id}">
+                            <span class="method-badge ${methodClass(method)} shrink-0 mt-0.5">${method}</span>
+                            <div class="min-w-0 flex-1">
+                                <div class="font-extrabold text-sm sm:text-base text-black truncate">${escapeHtml(item.name || 'Unnamed')}</div>
+                                <div class="font-mono text-[11px] sm:text-xs text-gray-700 font-bold truncate mt-0.5">${escapeHtml(item.path || '')}</div>
+                            </div>
+                            <i class="fas fa-chevron-down text-sm mt-2 text-black chevron transition-transform"></i>
+                        </button>
+                        <div class="ep-detail hidden px-4 pb-4 border-t-3 border-black pt-3 bg-[var(--nb-bg)] rounded-b-xl">
+                            <p class="text-sm text-gray-900 font-semibold mb-3">${escapeHtml(item.description || 'Tidak ada deskripsi')}</p>
+                            <p class="text-xs font-extrabold uppercase tracking-wider text-black mb-1.5">Parameter</p>
+                            <div class="flex flex-wrap gap-1.5 mb-4">${paramHtml}</div>
+                            <p class="text-xs font-extrabold uppercase tracking-wider text-black mb-1.5">Contoh Request URL</p>
+                            <code class="block font-mono text-[11px] sm:text-xs bg-white text-black p-3 rounded-xl overflow-x-auto break-all border-2 border-black shadow-[2px_2px_0px_#000] font-bold">${escapeHtml(exampleUrl)}</code>
+                            <a href="/docs?focus=${encodeURIComponent(item.path || '')}" class="inline-flex mt-3 nb-btn nb-btn-primary px-3.5 py-1.5 text-xs font-extrabold">
+                                <i class="fas fa-play mr-1"></i> Uji di Playground
+                            </a>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                return `
+                <section id="cat-${slug(cat.name)}" class="scroll-mt-24 mb-8">
+                    <h2 class="font-display font-extrabold text-xl mb-4 flex items-center gap-2">
+                        <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-[var(--nb-yellow)] border-2 border-black text-sm text-black">
+                            <i class="${getCategoryIcon(cat.name)}"></i>
+                        </span>
+                        ${escapeHtml(cat.name)}
+                        <span class="text-sm font-mono font-bold text-gray-700">(${cat.items.length})</span>
+                    </h2>
+                    ${rows}
+                </section>`;
+            }).join('');
+
+            list.querySelectorAll('.toggle-ep').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const row = document.getElementById(btn.dataset.target);
+                    if (!row) return;
+                    const detail = row.querySelector('.ep-detail');
+                    const chev = row.querySelector('.chevron');
+                    const open = !detail.classList.contains('hidden');
+                    detail.classList.toggle('hidden', open);
+                    row.classList.toggle('open', !open);
+                    if (chev) chev.style.transform = open ? '' : 'rotate(180deg)';
+                });
+            });
+        }
+
+        function slug(s) {
+            return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        }
+        function escapeHtml(t) {
+            const d = document.createElement('div');
+            d.textContent = t || '';
+            return d.innerHTML;
+        }
+        function escapeAttr(t) {
+            return (t || '').replace(/"/g, '&quot;');
+        }
+
+        document.getElementById('searchInput').addEventListener('input', renderList);
+        document.getElementById('methodFilter').addEventListener('change', renderList);
+
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>
