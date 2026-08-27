@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f8f6f0" />
+    <title>Melvin Rest Api — Documentation & Playground</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@700;800&family=Fira+Code:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --nb-bg: #f8f6f0;
+            --nb-card: #ffffff;
+            --nb-border: #000000;
+            --nb-yellow: #fef08a;
+            --nb-blue: #93c5fd;
+            --nb-green: #bbf7d0;
+            --nb-purple: #e9d5ff;
+            --nb-pink: #fbcfe8;
+            --nb-orange: #ff5722;
+            --nb-text: #000000;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: var(--nb-bg);
+            background-image: radial-gradient(#000000 1.2px, transparent 1.2px);
+            background-size: 20px 20px;
+            color: var(--nb-text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            padding-top: 88px;
+            padding-bottom: 80px;
+            position: relative;
+        }
+
+        .font-display { font-family: 'Space Grotesk', sans-serif; }
+        .font-mono { font-family: 'Fira Code', monospace; }
+
+        .nb-card {
+            background-color: var(--nb-card);
+            border: 3px solid var(--nb-border);
+            border-radius: 16px;
+            box-shadow: 4px 4px 0px var(--nb-border);
+            transition: all 0.15s ease;
+        }
+
+        .nb-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: var(--nb-card);
+            border: 3px solid var(--nb-border);
+            border-radius: 12px;
+            color: var(--nb-text);
+            font-weight: 800;
+            padding: 0.6rem 1.2rem;
+            box-shadow: 3px 3px 0px var(--nb-border);
+            transition: all 0.1s ease;
+            cursor: pointer;
+        }
+        .nb-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0px var(--nb-border);
+        }
+        .nb-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px var(--nb-border);
+        }
+
+        .nb-btn-primary { background-color: var(--nb-blue); }
+        .nb-btn-yellow { background-color: var(--nb-yellow); }
+
+        .brand-logo {
+            width: 38px; height: 38px; object-fit: cover; border: 2.5px solid var(--nb-border); border-radius: 10px; background: var(--nb-yellow);
+            box-shadow: 2px 2px 0px var(--nb-border);
+        }
+
+        .brand-rest-pill {
+            background-color: var(--nb-blue);
+            color: #000000;
+            border: 2px solid var(--nb-border);
+            border-radius: 8px;
+            padding: 0.15rem 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 800;
+            box-shadow: 2px 2px 0px #000000;
+            text-transform: uppercase;
+        }
+
+        .time-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ffffff;
+            border: 2.5px solid var(--nb-border);
+            border-radius: 10px;
+            padding: 4px 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #000;
+            box-shadow: 2px 2px 0px var(--nb-border);
+        }
+        .time-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            border: 1.5px solid #000;
+            animation: pulseDot 1.5s infinite;
+        }
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        .shape {
+            position: absolute;
+            z-index: 1;
+            pointer-events: none;
+            border: 2.5px solid #000;
+            box-shadow: 3px 3px 0px #000;
+        }
+        .shape-triangle {
+            width: 0; height: 0;
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-bottom: 24px solid #06b6d4;
+            border-top: none;
+            box-shadow: none;
+            background: transparent;
+            animation: floatShape1 5s ease-in-out infinite alternate;
+        }
+        .shape-circle {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            background-color: var(--nb-pink);
+            animation: floatShape2 4.2s ease-in-out infinite alternate;
+        }
+        .shape-square {
+            width: 20px; height: 20px;
+            background-color: var(--nb-purple);
+            transform: rotate(15deg);
+            animation: floatShape3 6s ease-in-out infinite alternate;
+        }
+        .shape-cross {
+            width: 18px; height: 18px;
+            background-color: var(--nb-yellow);
+            clip-path: polygon(33% 0%, 67% 0%, 67% 33%, 100% 33%, 100% 67%, 67% 67%, 67% 100%, 33% 100%, 33% 67%, 0% 67%, 0% 33%, 33% 33%);
+            animation: floatShape1 4.5s ease-in-out infinite alternate;
+        }
+        .shape-donut {
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            background: transparent;
+            border: 5px solid var(--nb-green);
+            animation: floatShape2 5.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatShape1 {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-18px) rotate(25deg); }
+        }
+        @keyframes floatShape2 {
+            0% { transform: translateY(0px) scale(1); }
+            100% { transform: translateY(-15px) scale(1.15); }
+        }
+        @keyframes floatShape3 {
+            0% { transform: translateY(0px) rotate(15deg); }
+            100% { transform: translateY(-22px) rotate(-20deg); }
+        }
+
+        .sidebar-cat-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            width: 100%;
+            text-align: left;
+            padding: 0.6rem 0.75rem;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            color: #000;
+            background: transparent;
+            transition: all 0.15s ease;
+        }
+        .sidebar-cat-btn:hover { background: var(--nb-bg); }
+        .sidebar-cat-btn.is-active {
+            border-color: var(--nb-border);
+            background: var(--nb-yellow);
+            box-shadow: 2px 2px 0px var(--nb-border);
+        }
+        .sidebar-cat-btn .cat-count {
+            margin-left: auto;
+            background: #ffffff;
+            color: #000;
+            border: 2px solid var(--nb-border);
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 0.1rem 0.5rem;
+        }
+
+        #loadingScreen {
+            position: fixed; inset: 0; width: 100vw; height: 100vh;
+            background: var(--nb-bg); z-index: 9999;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+        }
+        .loader {
+            width: 48px; height: 48px;
+            background-color: var(--nb-yellow);
+            border: 4px solid var(--nb-border);
+            box-shadow: 5px 5px 0px var(--nb-border);
+            animation: loaderSpin 0.8s infinite linear;
+        }
+        @keyframes loaderSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #welcomeModal {
+            position: fixed; inset: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(5px);
+            z-index: 10000; display: flex; justify-content: center; align-items: center;
+            padding: 1.25rem; opacity: 0; pointer-events: none; transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #welcomeModal.show { opacity: 1; pointer-events: auto; }
+        
+        .welcome-card {
+            background-color: #ffffff;
+            border: 3.5px solid var(--nb-border);
+            border-radius: 20px;
+            box-shadow: 8px 8px 0px var(--nb-border);
+            width: 100%;
+            max-width: 440px;
+            position: relative;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        #welcomeModal.show .welcome-card {
+            transform: scale(1);
+        }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        @media (min-width: 768px) { .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; } }
+
+        .stat-card {
+            border: 3px solid var(--nb-border); border-radius: 14px;
+            background: #ffffff; padding: 14px 16px; text-align: left;
+            box-shadow: 4px 4px 0px var(--nb-border);
+            transition: all 0.15s ease;
+        }
+        .stat-card:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px var(--nb-border); }
+        .stat-card .stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 800; line-height: 1; }
+        .stat-card .stat-label { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-top: 6px; }
+
+        .marquee-strip {
+            border: 3px solid var(--nb-border); border-radius: 12px;
+            background: var(--nb-yellow); overflow: hidden; white-space: nowrap;
+            box-shadow: 4px 4px 0px var(--nb-border);
+        }
+        .marquee-track { display: inline-block; padding-left: 100%; animation: marquee 20s linear infinite; }
+        .marquee-track span { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 0.85rem; padding: 8px 1.5rem; display: inline-block; color: #000; }
+        @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+
+        .content-type-badge {
+            font-size: 0.75rem; padding: 4px 10px; background: var(--nb-purple);
+            color: #000; font-weight: 800; border-radius: 8px; border: 2px solid var(--nb-border);
+            font-family: 'Fira Code', monospace; box-shadow: 2px 2px 0px var(--nb-border);
+        }
+
+        .response-media-container {
+            min-height: 100px;
+            max-height: 420px;
+            width: 100%;
+            overflow: auto !important;
+            -webkit-overflow-scrolling: touch;
+        }
+        .response-media-container img, .response-media-container video {
+            max-width: 100%; max-height: 350px; object-fit: contain;
+            border-radius: 8px; border: 2px solid var(--nb-border); display: block; margin: 0 auto;
+        }
+
+        .code-block {
+            font-family: 'Fira Code', monospace; font-weight: 500;
+            background: #ffffff; border: 2px solid var(--nb-border); overflow-x: auto;
+            border-radius: 10px; box-shadow: 2px 2px 0px var(--nb-border);
+        }
+
+        .toast {
+            position: fixed; bottom: 30px; right: 30px; background: var(--nb-green);
+            padding: 14px 20px; font-size: 0.85rem; font-weight: 800; color: #000;
+            display: flex; align-items: center; gap: 10px; z-index: 1000; max-width: 350px;
+            transform: translateY(120px); opacity: 0; transition: all 0.3s ease;
+            border: 3px solid var(--nb-border); border-radius: 12px; box-shadow: 4px 4px 0px var(--nb-border);
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        .nb-select-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--nb-yellow);
+            border: 2.5px solid var(--nb-border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #000000;
+            box-shadow: 3px 3px 0px var(--nb-border);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .nb-select-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px var(--nb-border);
+        }
+
+        .nb-select-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background-color: #ffffff;
+            border: 2.5px solid var(--nb-border);
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px var(--nb-border);
+            z-index: 100;
+            max-height: 140px;
+            overflow-y: auto !important;
+            display: none;
+            touch-action: pan-y;
+            -webkit-overflow-scrolling: touch;
+        }
+        .nb-select-menu.open {
+            display: block;
+            animation: popSelect 0.15s ease;
+        }
+
+        @keyframes popSelect {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nb-select-item {
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #000;
+            cursor: pointer;
+            border-bottom: 2px solid var(--nb-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color 0.15s ease;
+        }
+        .nb-select-item:last-child {
+            border-bottom: none;
+        }
+        .nb-select-item:hover, .nb-select-item.active {
+            background-color: var(--nb-yellow);
+        }
+
+        .fixed-navbar {
+            top: 0; left: 0; width: 100%; z-index: 30; height: 80px;
+            background-color: var(--nb-bg); position: fixed; border-bottom: 3px solid var(--nb-border);
+        }
+        .navbar-container {
+            max-width: 76rem; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 1.5rem; height: 100%;
+        }
+
+        .hamburger-menu-wrapper { position: relative; }
+        .hamburger-checkbox { display: none; }
+        .hamburger-button {
+            display: flex; flex-direction: column; justify-content: space-between;
+            width: 40px; height: 36px; cursor: pointer; padding: 7px 6px; z-index: 33;
+            border: 2.5px solid var(--nb-border); border-radius: 10px; background: var(--nb-yellow);
+            box-shadow: 2px 2px 0px var(--nb-border);
+        }
+        .hamburger-button span { display: block; height: 3px; background: #000; border-radius: 2px; }
+        .hamburger-checkbox:checked~.hamburger-button span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+        .hamburger-checkbox:checked~.hamburger-button span:nth-child(2) { opacity: 0; }
+        .hamburger-checkbox:checked~.hamburger-button span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+        .mobile-menu {
+            position: fixed; top: 0; right: -300px; width: 260px; height: 100vh;
+            background: var(--nb-bg); transition: right 0.3s ease-in-out; z-index: 32; overflow-y: auto; padding-top: 80px;
+            border-left: 3px solid var(--nb-border);
+        }
+        .hamburger-checkbox:checked~.mobile-menu { right: 0; }
+        .mobile-menu-close {
+            position: absolute; top: 1.25rem; right: 1.25rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--nb-border); border-radius: 10px; background: var(--nb-pink); color: #000; cursor: pointer; font-size: 1rem; font-weight: 800;
+        }
+        .mobile-menu-items { padding: 1.5rem; }
+        .mobile-nav-link {
+            display: flex; align-items: center; color: #000; padding: 0.85rem 1rem; margin-bottom: 0.75rem; text-decoration: none; font-weight: 800; border: 2px solid var(--nb-border); border-radius: 10px; background: #ffffff; box-shadow: 2px 2px 0px var(--nb-border);
+        }
+        .mobile-menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(0,0,0,0.4); z-index: 31; display: none; }
+        .hamburger-checkbox:checked~.mobile-menu-overlay { display: block; }
+
+        .desktop-menu { display: none; }
+
+        .endpoint-expand { transition: all 0.3s ease-in-out; max-height: 0; overflow: hidden; opacity: 0; margin: 0; padding: 0; }
+        .endpoint-expand.open { max-height: 2400px; opacity: 1; margin-top: 16px; overflow: visible !important; }
+
+        .api-item-content {
+            padding: 16px 20px; background-color: #ffffff; color: #000; border-radius: 14px;
+            display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none;
+            border: 3px solid var(--nb-border); box-shadow: 4px 4px 0px var(--nb-border); transition: all 0.15s ease;
+        }
+        .api-item-content:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px var(--nb-border); }
+        .api-item-content h5 { margin-bottom: 2px; }
+        .api-item-content .text-muted { font-size: 0.8rem; color: #4b5563; font-weight: 600; }
+
+        .endpoint-panel {
+            border: 3px solid var(--nb-border); border-radius: 14px; padding: 20px; background: var(--nb-bg); margin-top: 8px; box-shadow: 4px 4px 0px var(--nb-border);
+            overflow: visible !important;
+        }
+
+        .form-control-custom {
+            border-radius: 10px; padding: 10px 14px; border: 2px solid var(--nb-border); font-size: 0.85rem;
+            background: #ffffff; color: #000; font-weight: 700; transition: border-color 0.2s; box-shadow: 2px 2px 0px var(--nb-border);
+        }
+        .form-control-custom:focus { outline: none !important; background: var(--nb-yellow) !important; }
+
+        .neo-dropzone {
+            border: 3px solid var(--nb-border);
+            background-color: #fff8eb;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+            box-shadow: 3px 3px 0px var(--nb-border);
+        }
+
+        .neo-dropzone:hover, .neo-dropzone.dragover {
+            background-color: var(--nb-yellow);
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0px var(--nb-border);
+        }
+
+        .neo-dropzone input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .neo-dropzone-icon {
+            font-size: 24px;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        .neo-dropzone-text {
+            font-weight: 800;
+            color: #000;
+            font-size: 0.75rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .neo-file-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            padding: 4px 10px;
+            background: var(--nb-pink);
+            color: #000;
+            border: 2px solid var(--nb-border);
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            font-family: 'Fira Code', monospace;
+            box-shadow: 2px 2px 0px var(--nb-border);
+        }
+
+        .category-header {
+            font-size: 1.1rem; font-weight: 800; color: #000; margin-bottom: 1rem; padding: 0.6rem 1.2rem;
+            display: inline-flex; align-items: center; gap: 10px; border: 3px solid var(--nb-border); border-radius: 12px; background: var(--nb-yellow); box-shadow: 3px 3px 0px var(--nb-border);
+        }
+
+        .btn-dark-custom {
+            background-color: var(--nb-blue); color: #000; border: 2px solid var(--nb-border); border-radius: 8px;
+            padding: 4px 8px; font-weight: 800; font-size: 0.75rem; font-family: 'Fira Code', monospace; box-shadow: 2px 2px 0px var(--nb-border);
+        }
+
+        @media (min-width: 1024px) { .desktop-menu { display: flex; } }
+
+        .donasi-modal {
+            position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: opacity 0.2s ease, visibility 0.2s ease; padding: 1rem;
+        }
+        .donasi-modal.show { opacity: 1; visibility: visible; }
+        .donasi-modal-box {
+            position: relative; background: #ffffff; border: 3px solid var(--nb-border); border-radius: 20px;
+            max-width: 400px; width: 100%; padding: 1.75rem; box-shadow: 8px 8px 0px var(--nb-border); transform: translateY(20px); transition: transform 0.2s ease; max-height: 90vh; overflow-y: auto;
+        }
+        .donasi-modal.show .donasi-modal-box { transform: translateY(0); }
+        .donasi-close-btn {
+            position: absolute; top: 1rem; right: 1rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--nb-border); border-radius: 10px; background: var(--nb-yellow); color: #000; cursor: pointer; font-size: 1rem; font-weight: 800; box-shadow: 2px 2px 0px var(--nb-border);
+        }
+        .donasi-tabs { display: flex; gap: 0.35rem; margin-bottom: 1.25rem; border: 2px solid var(--nb-border); border-radius: 12px; padding: 4px; background: var(--nb-bg); }
+        .donasi-tab-btn { flex: 1; padding: 0.55rem 0.75rem; border-radius: 8px; border: 2px solid transparent; background: transparent; color: #000; font-weight: 800; font-size: 0.8rem; cursor: pointer; }
+        .donasi-tab-btn.is-active { background: var(--nb-yellow); border-color: var(--nb-border); box-shadow: 2px 2px 0px var(--nb-border); }
+        .donasi-qr-wrap { background: #fff; border-radius: 14px; padding: 0.75rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; border: 3px solid var(--nb-border); box-shadow: 4px 4px 0px var(--nb-border); }
+        .donasi-qr-img { width: 100%; max-width: 220px; aspect-ratio: 1 / 1; object-fit: contain; display: block; margin: 0 auto; border-radius: 8px; }
+        .donasi-account-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; background: var(--nb-green); border: 2px solid var(--nb-border); border-radius: 12px; padding: 0.75rem 1rem; box-shadow: 3px 3px 0px var(--nb-border); }
+        .donasi-account-label { font-size: 0.7rem; color: #000; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; }
+        .donasi-account-number { font-size: 1rem; font-weight: 800; color: #000; }
+        .donasi-copy-btn { flex-shrink: 0; display: flex; align-items: center; gap: 0.35rem; padding: 0.5rem 0.75rem; border-radius: 8px; border: 2px solid var(--nb-border); background: #ffffff; color: #000; font-size: 0.75rem; font-weight: 800; cursor: pointer; box-shadow: 2px 2px 0px var(--nb-border); }
+        .donasi-copy-btn:hover { background: var(--nb-yellow); }
+        .donasi-copy-btn.copied { background: var(--nb-green); }
+        .donasi-panel.hidden { display: none; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Modal Donasi -->
+    <div id="donasiModal" class="donasi-modal" role="dialog" aria-modal="true" aria-labelledby="donasiTitle">
+        <div class="donasi-modal-box">
+            <button type="button" id="donasiCloseBtn" class="donasi-close-btn" aria-label="Tutup">
+                <i class="fas fa-xmark"></i>
+            </button>
+            <h2 id="donasiTitle" class="font-display font-extrabold text-2xl mb-1">Dukung Melvin Rest Api</h2>
+            <p class="text-sm font-semibold leading-relaxed mb-4 text-gray-800">
+                Donasi kamu membantu Melvin Rest Api tetap online dan terus berkembang. Terima kasih atas dukungannya!
+            </p>
+
+            <div class="donasi-tabs">
+                <button type="button" class="donasi-tab-btn is-active" data-country="id">Indonesia</button>
+            </div>
+
+            <div class="donasi-panel" data-country-panel="id">
+                <div class="donasi-qr-wrap">
+                    <img src="https://d.top4top.io/p_3869t7t6m1.jpg" alt="QR DANA Indonesia" class="donasi-qr-img" id="donasiQr-id">
+                </div>
+                <button type="button" class="nb-btn nb-btn-primary w-full py-2.5 text-sm mb-3 donasi-download-btn"
+                        data-download-url="https://d.top4top.io/p_3869t7t6m1.jpg" data-download-name="QR-DANA-Indonesia.jpg">
+                    <i class="fas fa-download"></i> Unduh QR
+                </button>
+                <div class="donasi-account-row">
+                    <div>
+                        <div class="donasi-account-label">DANA</div>
+                        <div class="donasi-account-number font-mono">085167997251</div>
+                    </div>
+                    <button type="button" class="donasi-copy-btn" data-copy="085167997251">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+        <div class="text-center relative">
+            <div class="loader mx-auto mb-4"></div>
+            <p class="font-display font-extrabold text-sm tracking-widest text-black uppercase">BOOTING MELVIN REST API V1.0...</p>
+        </div>
+    </div>
+
+    <!-- Welcome Modal -->
+    <div id="welcomeModal">
+        <div class="welcome-card p-6 sm:p-7 text-center">
+            <div class="flex items-center justify-between mb-5">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold font-mono bg-[var(--nb-purple)] border-2 border-black shadow-[2px_2px_0px_#000]">
+                    <i class="fas fa-shield-halved text-xs"></i> ACCESS GRANTED
+                </span>
+                <div class="time-badge text-[11px] py-1">
+                    <span class="time-dot"></span>
+                    <span class="wib-clock-modal">00:00:00 WIB</span>
+                </div>
+            </div>
+
+            <div class="relative w-20 h-20 mx-auto mb-4">
+                <div class="w-full h-full rounded-2xl bg-[var(--nb-yellow)] border-3 border-black flex items-center justify-center text-black shadow-[4px_4px_0px_#000] rotate-[-3deg] hover:rotate-0 transition-transform">
+                    <i class="fas fa-key text-3xl"></i>
+                </div>
+                <div class="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-[var(--nb-pink)] border-2 border-black flex items-center justify-center text-xs font-black shadow-[1.5px_1.5px_0px_#000]">
+                    <i class="fas fa-sparkles text-amber-600"></i>
+                </div>
+            </div>
+
+            <h3 class="font-display font-extrabold text-2xl text-black mb-2 leading-tight">
+                Selamat Datang di <span class="bg-[var(--nb-yellow)] px-2 py-0.5 border-2 border-black rounded-lg inline-block shadow-[2px_2px_0px_#000] -rotate-1">Melvin Rest Api</span>
+            </h3>
+            <p class="text-gray-800 text-xs font-bold leading-relaxed mb-5 px-2">
+                Silakan gunakan kunci akses publik di bawah ini untuk mulai menjelajahi dan menguji seluruh endpoint.
+            </p>
+
+            <div class="bg-[var(--nb-bg)] border-3 border-black p-3.5 rounded-2xl mb-6 shadow-[3px_3px_0px_#000]">
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 border border-black"></span>
+                        <span class="text-xs font-mono font-extrabold text-gray-700">PUBLIC KEY:</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-mono font-extrabold text-black bg-white px-3 py-1 rounded-xl border-2 border-black shadow-[2px_2px_0px_#000]" id="publicKeyText">mlvn</span>
+                        <button onclick="copyPublicKey()" class="nb-btn py-1 px-2.5 text-xs bg-[var(--nb-green)] hover:bg-emerald-300">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <a href="https://whatsapp.com/channel/0029Vb7eLDIGzzKXAALjIO1v" target="_blank" class="nb-btn w-full py-3 text-xs font-extrabold flex items-center justify-center gap-2 bg-[#25D366] text-white hover:bg-[#1ebd56]">
+                    <i class="fab fa-whatsapp text-base"></i> JOIN CHANNEL WHATSAPP
+                </a>
+                <a href="https://t.me/aboutvin7x" target="_blank" class="nb-btn nb-btn-primary w-full py-3 text-xs font-extrabold flex items-center justify-center gap-2 bg-[#60a5fa] hover:bg-[#3b82f6]">
+                    <i class="fab fa-telegram text-base"></i> JOIN CHANNEL TELEGRAM
+                </a>
+                <button onclick="closeWelcomeModal()" class="nb-btn nb-btn-yellow w-full py-3 text-xs font-extrabold">
+                    Lanjut ke Dokumentasi <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+        window.scrollTo(0, 0);
+    </script>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed-navbar">
+        <div class="navbar-container">
+            <a href="/" class="flex items-center gap-2 sm:gap-3 text-black font-extrabold text-xl no-underline">
+                <img src="https://k.top4top.io/p_3886wxxuk1.jpg" alt="Yj Logo" class="brand-logo" onerror="this.style.display='none'">
+                <div class="flex items-center gap-2">
+                    <span>Melvin</span>
+                    <span class="brand-rest-pill">REST API</span>
+                </div>
+            </a>
+
+            <div class="flex items-center gap-3">
+                <div class="time-badge">
+                    <span class="time-dot"></span>
+                    <span class="wib-clock font-mono text-xs">00:00:00 WIB</span>
+                </div>
+
+                <div class="hamburger-menu-wrapper lg:hidden">
+                    <input type="checkbox" class="hamburger-checkbox" id="hamburger-toggle">
+                    <label for="hamburger-toggle" class="hamburger-button" aria-label="Menu Toggle">
+                        <span></span><span></span><span></span>
+                    </label>
+
+                    <div class="mobile-menu">
+                        <label for="hamburger-toggle" class="mobile-menu-close" aria-label="Tutup menu">
+                            <i class="fas fa-xmark"></i>
+                        </label>
+                        <div class="mobile-menu-items">
+                            <a href="/" class="mobile-nav-link"><i class="fas fa-house mr-3 text-amber-500"></i> Home</a>
+                            <button type="button" data-donasi-open class="mobile-nav-link w-full" style="cursor:pointer; font-family:inherit; text-align:left;"><i class="fas fa-heart mr-3 text-red-500"></i> Donasi</button>
+                            <div class="h-[2px] bg-black my-3"></div>
+                            <a id="Whatsapp" href="https://whatsapp.com/channel/0029Vb7eLDIGzzKXAALjIO1v" target="_blank" class="mobile-nav-link"><i class="fab fa-whatsapp mr-3 text-green-600"></i> WhatsApp</a>
+                            <a href="https://t.me/aboutvin7x" target="_blank" class="mobile-nav-link"><i class="fab fa-telegram mr-3 text-blue-500"></i> Telegram</a>
+                        </div>
+                    </div>
+
+                    <label for="hamburger-toggle" class="mobile-menu-overlay"></label>
+                </div>
+
+                <div class="desktop-menu hidden lg:flex items-center gap-5">
+                    <a href="/" class="text-black hover:underline font-bold text-sm">Home</a>
+                    <a href="/docs" class="font-bold text-sm px-3.5 py-1.5 bg-[var(--nb-yellow)] border-2 border-black rounded-lg shadow-[2px_2px_0px_#000]">Documentation</a>
+                    <button type="button" data-donasi-open class="text-black hover:underline font-bold text-sm flex items-center gap-1.5" style="background:none; border:none; cursor:pointer;">
+                        <i class="fas fa-heart text-red-500"></i> Donasi
+                    </button>
+                    <a id="WhatsappDesktop" href="https://whatsapp.com/channel/0029Vb7eLDIGzzKXAALjIO1v" target="_blank" class="nb-btn text-xs py-2 px-4 bg-white">
+                        <i class="fab fa-whatsapp text-green-600"></i> Contact
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl lg:max-w-7xl mx-auto px-4 md:px-6 py-4 relative">
+
+        <div class="shape shape-triangle top-8 left-4 sm:left-20"></div>
+        <div class="shape shape-circle top-16 right-10 sm:right-32" style="animation-delay: -1s;"></div>
+        <div class="shape shape-cross top-72 left-8" style="animation-delay: -1.5s;"></div>
+        <div class="shape shape-donut top-96 right-12" style="animation-delay: -0.5s;"></div>
+        <div class="shape shape-square bottom-20 left-1/4" style="animation-delay: -2s;"></div>
+
+        <header class="mb-6 relative z-10">
+
+            <div class="marquee-strip mb-6">
+                <div class="marquee-track">
+                    <span>FAST RESPONSE</span><span>•</span>
+                    <span>BUILD BY MLV!N</span><span>•</span>
+                    <span>TEST ENDPOINTS LIVE</span><span>•</span>
+                    <span>SIMPLE INTEGRATION</span><span>•</span>
+                    <span>MELVIN REST API V1.0</span><span>•</span>
+                </div>
+            </div>
+
+            <div class="stats-grid mb-6">
+                <div class="stat-card bg-[var(--nb-yellow)]">
+                    <div class="stat-num text-black" id="totalEndpoints">—</div>
+                    <div class="stat-label text-black">Endpoints</div>
+                </div>
+                <div class="stat-card bg-[var(--nb-purple)]">
+                    <div class="stat-num text-black" id="totalCategories">—</div>
+                    <div class="stat-label text-black">Categories</div>
+                </div>
+                <div class="stat-card bg-[var(--nb-green)]">
+                    <div class="stat-num text-black" id="statusReady">—</div>
+                    <div class="stat-label text-black">Uptime</div>
+                </div>
+                <div class="stat-card bg-[var(--nb-pink)]">
+                    <div class="stat-num font-mono text-xl text-black">v1.0</div>
+                    <div class="stat-label text-black">API Version</div>
+                </div>
+            </div>
+
+            <div class="mb-6 flex items-center gap-3">
+                <div class="relative flex-1">
+                    <input type="text" id="searchInput" class="form-control-custom text-sm w-full py-3 px-4" placeholder="Cari endpoint, path, atau metode..." autocomplete="off">
+                </div>
+                <span id="searchResultsCount" class="hidden text-xs py-2.5 px-4 rounded-xl bg-white border-2 border-black font-mono font-extrabold shadow-[2px_2px_0px_#000]">
+                    <span id="resultsCount">0</span> ditemukan
+                </span>
+            </div>
+
+            <div class="lg:hidden">
+                <div class="flex overflow-x-auto gap-2 py-2" id="categoryScroll"></div>
+            </div>
+        </header>
+
+        <div class="lg:flex lg:items-start lg:gap-8 relative z-10">
+
+            <aside class="hidden lg:block lg:w-64 lg:shrink-0 sticky top-28 self-start">
+                <div class="nb-card p-4">
+                    <h3 class="font-display font-extrabold text-xs uppercase tracking-widest text-black mb-3 px-1">Kategori</h3>
+                    <div id="categorySidebar" class="flex flex-col gap-1.5 max-h-[65vh] overflow-y-auto pr-1"></div>
+                </div>
+            </aside>
+
+            <section class="mb-20 flex-1 min-w-0">
+                <div id="content">
+                    <div id="noResults" class="text-center py-14 nb-card hidden">
+                        <div class="max-w-md mx-auto px-4">
+                            <h3 class="text-base font-display font-extrabold text-black mb-2">Tidak ada hasil ditemukan</h3>
+                            <p class="text-gray-800 text-sm font-semibold mb-6">Coba gunakan kata kunci lain atau periksa ejaan pencarian Anda.</p>
+                            <button id="clearSearchBtn" class="nb-btn text-sm px-5 py-2.5">
+                                Bersihkan Pencarian
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="apiList" class="space-y-6"></div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="pt-8 mt-4 border-t-3 border-black relative z-10">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <img src="https://k.top4top.io/p_3886wxxuk1.jpg" alt="Yj Logo" class="brand-logo" style="width:30px;height:30px;" onerror="this.style.display='none'">
+                    <p id="wm" class="text-black font-extrabold text-xs sm:text-sm font-mono">© 2026 Melvin Rest Api v1.0 · @viñn. · t.me/luyatiem</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <div id="toastContainer"></div>
+
+    <script>
+        function updateWIBClock() {
+            const now = new Date();
+            const options = {
+                timeZone: 'Asia/Jakarta',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
+            const timeString = new Intl.DateTimeFormat('id-ID', options).format(now).replace(/\./g, ':') + ' WIB';
+            
+            document.querySelectorAll('.wib-clock').forEach(el => el.textContent = timeString);
+            document.querySelectorAll('.wib-clock-modal').forEach(el => el.textContent = timeString);
+        }
+        setInterval(updateWIBClock, 1000);
+        updateWIBClock();
+
+        (function () {
+            const modal = document.getElementById('donasiModal');
+            if (!modal) return;
+            const closeBtn = document.getElementById('donasiCloseBtn');
+            const openBtns = document.querySelectorAll('[data-donasi-open]');
+            const tabBtns = modal.querySelectorAll('.donasi-tab-btn');
+            const panels = modal.querySelectorAll('.donasi-panel');
+
+            function openModal() {
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeModal() {
+                modal.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+            openBtns.forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const hamburgerToggle = document.getElementById('hamburger-toggle');
+                    if (hamburgerToggle) hamburgerToggle.checked = false;
+                    openModal();
+                });
+            });
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) closeModal();
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+            });
+
+            tabBtns.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const country = btn.getAttribute('data-country');
+                    tabBtns.forEach(function (b) { b.classList.toggle('is-active', b === btn); });
+                    panels.forEach(function (p) {
+                        p.classList.toggle('hidden', p.getAttribute('data-country-panel') !== country);
+                    });
+                });
+            });
+
+            function fallbackCopy(text, cb) {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                try { document.execCommand('copy'); } catch (e) {}
+                document.body.removeChild(ta);
+                if (cb) cb();
+            }
+
+            function downloadImage(url, filename, btn) {
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengunduh...';
+                btn.disabled = true;
+                fetch(url, { mode: 'cors' })
+                    .then(function (res) {
+                        if (!res.ok) throw new Error('fetch failed');
+                        return res.blob();
+                    })
+                    .then(function (blob) {
+                        const blobUrl = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = blobUrl;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        setTimeout(function () { URL.revokeObjectURL(blobUrl); }, 4000);
+                        btn.innerHTML = '<i class="fas fa-check"></i> Terunduh';
+                        setTimeout(function () { btn.innerHTML = originalHTML; btn.disabled = false; }, 1800);
+                    })
+                    .catch(function () {
+                        window.open(url, '_blank');
+                        btn.innerHTML = originalHTML;
+                        btn.disabled = false;
+                    });
+            }
+
+            modal.querySelectorAll('.donasi-download-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const url = btn.getAttribute('data-download-url');
+                    const filename = btn.getAttribute('data-download-name') || 'qr.jpg';
+                    downloadImage(url, filename, btn);
+                });
+            });
+
+            modal.querySelectorAll('.donasi-copy-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const text = btn.getAttribute('data-copy');
+                    const original = btn.innerHTML;
+                    function done() {
+                        btn.innerHTML = '<i class="fas fa-check"></i> Disalin';
+                        btn.classList.add('copied');
+                        setTimeout(function () {
+                            btn.innerHTML = original;
+                            btn.classList.remove('copied');
+                        }, 1800);
+                    }
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text, done); });
+                    } else {
+                        fallbackCopy(text, done);
+                    }
+                });
+            });
+        })();
+
+        let settings = {};
+        let allApiItems = [];
+        let originalCategories = [];
+        let activeCategoryFilter = '';
+
+        const categoryIcons = {
+            'Bypass': 'fas fa-bolt',
+            'Premium': 'fas fa-crown',
+            'Downloader': 'fas fa-download',
+            'Imagecreator': 'fas fa-image',
+            'AI': 'fas fa-robot',
+            'Random': 'fas fa-shuffle',
+            'Search': 'fas fa-magnifying-glass',
+            'Stalker': 'fas fa-user-secret',
+            'Tools': 'fas fa-screwdriver-wrench',
+            'Orderkuota': 'fas fa-sim-card',
+            'AI Tools': 'fas fa-brain',
+            'Entertainment': 'fas fa-gamepad',
+            'Utilities': 'fas fa-gears',
+            'Social Media': 'fas fa-share-nodes',
+            'Canvas': 'fas fa-paintbrush'
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            setInterval(function() { if (typeof updateStats === 'function') updateStats(); }, 15000);
+            
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.nb-select-btn') && !e.target.closest('.nb-select-menu')) {
+                    document.querySelectorAll('.nb-select-menu').forEach(m => m.classList.remove('open'));
+                    document.querySelectorAll('.nb-select-btn i').forEach(i => i.style.transform = '');
+                }
+            });
+        });
+
+        async function initializeApp() {
+            var modalShown = false;
+            function finishBoot() {
+                if (modalShown) return;
+                modalShown = true;
+                showWelcomeModal();
+            }
+            setTimeout(finishBoot, 1500);
+
+            try {
+                settings = await loadSettings();
+                setupUI();
+                await loadAPIData();
+                setupEventListeners();
+                setTimeout(finishBoot, 200);
+            } catch (error) {
+                settings = getDefaultSettings();
+                setupUI();
+                try {
+                    var apiData = await loadSettings();
+                    originalCategories = apiData.categories || [];
+                    renderAPIData(originalCategories);
+                    initializeCategoryFilters();
+                    updateStats();
+                } catch (e2) {}
+                setupEventListeners();
+                setTimeout(finishBoot, 200);
+            }
+            setTimeout(function() {
+                if (!modalShown) finishBoot();
+            }, 3000);
+        }
+
+        function showWelcomeModal() {
+            var loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.display = 'none';
+            }
+            var modal = document.getElementById('welcomeModal');
+            if (modal) {
+                modal.classList.add('show');
+            }
+        }
+
+        function closeWelcomeModal() {
+            var modal = document.getElementById('welcomeModal');
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        }
+
+        function copyPublicKey() {
+            navigator.clipboard.writeText('mlvn');
+            showToast('Public key berhasil disalin!', 'success');
+        }
+
+        async function loadSettings() {
+            try {
+                const response = await fetch("/settings", { headers: { 'Accept': 'application/json' } });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                return getDefaultSettings();
+            }
+        }
+
+        async function loadAPIData() {
+            try {
+                let apiData = await loadSettings();
+                settings.categories = apiData.categories || [];
+                originalCategories = JSON.parse(JSON.stringify(settings.categories || []));
+
+                allApiItems = [];
+                originalCategories.forEach(category => {
+                    if (category && category.items) {
+                        category.items.forEach(item => {
+                            if (item) { allApiItems.push({ ...item, category: category.name }); }
+                        });
+                    }
+                });
+
+                renderAPIData(originalCategories);
+                initializeCategoryFilters();
+                updateStats();
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        function getDefaultSettings() {
+            return {
+                name: "Melvin Rest Api",
+                creator: "@viñn.",
+                description: "Melvin Rest Api v1.0 Documentation",
+                categories: [],
+                linkWhatsapp: "https://whatsapp.com/channel/0029Vb7eLDIGzzKXAALjIO1v"
+            };
+        }
+
+        function setupUI() {
+            const wmApi = document.getElementById('wm');
+            if (wmApi) wmApi.textContent = `© 2026 Melvin Rest Api v1.0 · ${settings.creator || "@viñn."}. All rights reserved.`;
+        }
+
+        function initializeCategoryFilters() {
+            const categoryScroll = document.getElementById('categoryScroll');
+            const categorySidebar = document.getElementById('categorySidebar');
+            if (!categoryScroll && !categorySidebar) return;
+
+            if (categoryScroll) categoryScroll.innerHTML = '';
+            if (categorySidebar) categorySidebar.innerHTML = '';
+
+            if (!originalCategories || originalCategories.length === 0) return;
+
+            const allCount = originalCategories.reduce((sum, c) => sum + (c.items?.length || 0), 0);
+            if (categoryScroll) {
+                categoryScroll.innerHTML += `
+                    <button class="category-filter nb-btn shrink-0 px-4 py-2 text-xs font-extrabold flex items-center gap-2 is-active bg-[var(--nb-yellow)]" data-category="">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Semua</span>
+                        <span class="text-[10px] bg-white text-black border border-black py-0.5 px-1.5 rounded-full font-extrabold">${allCount}</span>
+                    </button>
+                `;
+            }
+            if (categorySidebar) {
+                categorySidebar.innerHTML += `
+                    <button class="category-filter-sidebar sidebar-cat-btn is-active" data-category="">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Semua</span>
+                        <span class="cat-count">${allCount}</span>
+                    </button>
+                `;
+            }
+
+            originalCategories.forEach((category) => {
+                if (!category || !category.name) return;
+                const icon = categoryIcons[category.name] || 'fas fa-folder';
+
+                if (categoryScroll) {
+                    categoryScroll.innerHTML += `
+                        <button class="category-filter nb-btn shrink-0 px-4 py-2 text-xs font-extrabold flex items-center gap-2 bg-white" data-category="${category.name.toLowerCase()}">
+                            <i class="${icon}"></i>
+                            <span>${category.name}</span>
+                            <span class="text-[10px] bg-[var(--nb-yellow)] text-black border border-black py-0.5 px-1.5 rounded-full font-extrabold">${category.items?.length || 0}</span>
+                        </button>
+                    `;
+                }
+
+                if (categorySidebar) {
+                    categorySidebar.innerHTML += `
+                        <button class="category-filter-sidebar sidebar-cat-btn" data-category="${category.name.toLowerCase()}">
+                            <i class="${icon}"></i>
+                            <span>${category.name}</span>
+                            <span class="cat-count">${category.items?.length || 0}</span>
+                        </button>
+                    `;
+                }
+            });
+
+            activeCategoryFilter = '';
+
+            function syncActiveState(selectedCategory) {
+                document.querySelectorAll('.category-filter').forEach(f => {
+                    f.classList.toggle('is-active', f.dataset.category === selectedCategory);
+                });
+                document.querySelectorAll('.category-filter-sidebar').forEach(f => {
+                    f.classList.toggle('is-active', f.dataset.category === selectedCategory);
+                });
+            }
+
+            document.querySelectorAll('.category-filter, .category-filter-sidebar').forEach((filter) => {
+                filter.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    syncActiveState(category);
+                    activeCategoryFilter = category;
+                    applyCategoryFilter(category);
+                    if (window.innerWidth >= 1024) {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+            });
+
+            renderAPIData(originalCategories);
+            updateStats();
+        }
+
+        function applyCategoryFilter(category) {
+            let filteredCategories;
+            if (!category || category === '') {
+                filteredCategories = originalCategories;
+            } else {
+                filteredCategories = originalCategories.filter(cat =>
+                    cat.name.toLowerCase() === category.toLowerCase()
+                );
+            }
+            renderAPIData(filteredCategories);
+            updateSearchResultsCount();
+        }
+
+        function formatUptime(seconds) {
+            var n = Number(seconds);
+            if (!isFinite(n) || n < 0) return '—';
+            var s = Math.floor(n);
+            var d = Math.floor(s / 86400);
+            var h = Math.floor((s % 86400) / 3600);
+            var m = Math.floor((s % 3600) / 60);
+            if (d > 0) return d + 'd ' + h + 'h';
+            if (h > 0) return h + 'h ' + m + 'm';
+            if (m > 0) return m + 'm';
+            return s + 's';
+        }
+
+        function updateStats() {
+            var totalEndpoints = document.getElementById('totalEndpoints');
+            var totalCategories = document.getElementById('totalCategories');
+            var statusReady = document.getElementById('statusReady');
+
+            var endpointCount = 0;
+            var categoryCount = (originalCategories || []).length;
+            (originalCategories || []).forEach(function(category) {
+                endpointCount += (category.items || []).length;
+            });
+            if (totalEndpoints && endpointCount > 0) totalEndpoints.textContent = endpointCount;
+            if (totalCategories && categoryCount > 0) totalCategories.textContent = categoryCount;
+
+            Promise.all([
+                fetch('/health', { cache: 'no-store' }).then(function(r) { return r.ok ? r.json() : null; }).catch(function() { return null; }),
+                fetch('/settings', { cache: 'no-store' }).then(function(r) { return r.ok ? r.json() : null; }).catch(function() { return null; })
+            ]).then(function(results) {
+                var health = results[0];
+                var settingsData = results[1];
+                if (health) {
+                    if (statusReady && health.uptime != null) {
+                        statusReady.textContent = formatUptime(health.uptime);
+                        statusReady.title = 'Server uptime: ' + Math.floor(Number(health.uptime)) + ' detik';
+                    }
+                    if (totalEndpoints && typeof health.endpoints === 'number' && health.endpoints > 0) {
+                        totalEndpoints.textContent = health.endpoints;
+                    }
+                }
+                if (settingsData) {
+                    if (totalCategories) {
+                        var cats = settingsData.categories || [];
+                        var metaCats = settingsData.metadata && settingsData.metadata.totalCategories;
+                        totalCategories.textContent = metaCats != null ? metaCats : cats.length;
+                    }
+                    if (totalEndpoints && (!health || typeof health.endpoints !== 'number')) {
+                        var metaEp = settingsData.metadata && settingsData.metadata.totalEndpoints;
+                        if (metaEp != null) totalEndpoints.textContent = metaEp;
+                    }
+                }
+            });
+        }
+
+        function renderAPIData(categories) {
+            const apiList = document.getElementById('apiList');
+            if (!apiList) return;
+
+            if (!categories || categories.length === 0) {
+                apiList.innerHTML = `
+                    <div class="text-center py-14 nb-card">
+                        <h3 class="text-lg font-display font-extrabold text-black mb-2">Tidak ada endpoint tersedia</h3>
+                        <p class="text-gray-800 text-sm font-semibold">Periksa kembali nanti atau hubungi administrator.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            categories.forEach((category) => {
+                if (!category || !category.name) return;
+                const realCatIndex = originalCategories.findIndex(c => c && c.name === category.name);
+                if (realCatIndex === -1) return;
+                const catIndex = realCatIndex;
+
+                const icon = categoryIcons[category.name] || 'fas fa-folder';
+                html += `<div class="mb-2"><span class="category-header"><i class="${icon}"></i> ${category.name}</span></div>`;
+                html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">`;
+
+                if (category.items && category.items.length > 0) {
+                    category.items.forEach((item) => {
+                        if (!item) return;
+                        const origItems = originalCategories[realCatIndex].items || [];
+                        let endpointIndex = origItems.findIndex(oi => oi && oi.path === item.path && oi.name === item.name);
+                        if (endpointIndex === -1) endpointIndex = origItems.findIndex(oi => oi && oi.path === item.path);
+                        if (endpointIndex === -1) return;
+
+                        const method = item.method || "GET";
+                        const path = item.path || '';
+                        const itemName = item.name || 'Unnamed Endpoint';
+                        const itemDesc = item.description || 'Tidak ada deskripsi';
+                        let initialUrl = window.location.origin + path;
+                        const formId = `form-${catIndex}-${endpointIndex}`;
+
+                        html += `
+                            <div class="api-item" data-method="${method.toLowerCase()}" data-path="${path}" data-alias="${itemName}">
+                                <div class="api-item-content" onclick="toggleEndpoint(${catIndex}, ${endpointIndex}, this)">
+                                    <div>
+                                        <h5 class="font-display font-extrabold text-black text-sm">${itemName}</h5>
+                                        <p class="mb-0 text-muted">${itemDesc}</p>
+                                    </div>
+                                    <div class="flex items-center gap-2 shrink-0">
+                                        <button class="btn-dark-custom">${method}</button>
+                                        <i class="fas fa-chevron-down text-xs text-black"></i>
+                                    </div>
+                                </div>
+
+                                <div id="endpoint-${catIndex}-${endpointIndex}" class="endpoint-expand">
+                                    <div class="endpoint-panel">
+                                        <form id="${formId}">
+                                            <div class="mb-5 space-y-4" id="params-container-${catIndex}-${endpointIndex}"></div>
+
+                                            <div class="mb-6">
+                                                <div class="code-block px-4 py-3">
+                                                    <span class="text-xs text-black font-bold truncate block" id="url-display-${catIndex}-${endpointIndex}">${initialUrl}</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex gap-3">
+                                                <button type="button" onclick="executeRequest(${catIndex}, ${endpointIndex}, '${method}')"
+                                                        class="nb-btn nb-btn-primary flex-1 py-2.5 px-4 text-xs flex items-center justify-center gap-2">
+                                                    <i class="fas fa-play"></i> Eksekusi Request
+                                                </button>
+                                                <button type="button" onclick="clearResponse(${catIndex}, ${endpointIndex})"
+                                                        class="nb-btn px-4 text-xs flex items-center justify-center gap-2 bg-white">
+                                                    <i class="fas fa-rotate-left"></i>
+                                                </button>
+                                            </div>
+                                        </form>
+
+                                        <div id="response-${catIndex}-${endpointIndex}" class="mt-6 hidden">
+                                            <div class="flex justify-between items-center mb-3">
+                                                <span class="content-type-badge" id="content-type-${catIndex}-${endpointIndex}"></span>
+                                                <div class="flex items-center gap-3">
+                                                    <span class="text-xs font-mono font-bold text-black" id="response-time-${catIndex}-${endpointIndex}"></span>
+                                                    <button onclick="copyResponse(${catIndex}, ${endpointIndex})" class="text-black hover:opacity-70 font-bold"><i class="fas fa-copy"></i></button>
+                                                </div>
+                                            </div>
+
+                                            <div class="nb-card overflow-hidden bg-white p-3">
+                                                <div class="response-media-container" id="response-content-${catIndex}-${endpointIndex}"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                html += `</div>`;
+            });
+
+            apiList.innerHTML = html;
+
+            setTimeout(() => {
+                if (categories && categories.length > 0) {
+                    categories.forEach((category) => {
+                        if (!category || !category.items) return;
+                        const realCatIndex = originalCategories.findIndex(c => c && c.name === category.name);
+                        if (realCatIndex === -1) return;
+                        const origItems = originalCategories[realCatIndex].items || [];
+                        category.items.forEach((item) => {
+                            if (!item) return;
+                            let endpointIndex = origItems.findIndex(oi => oi && oi.path === item.path && oi.name === item.name);
+                            if (endpointIndex === -1) endpointIndex = origItems.findIndex(oi => oi && oi.path === item.path);
+                            if (endpointIndex === -1) return;
+                            initializeEndpointParameters(realCatIndex, endpointIndex, item);
+                        });
+                    });
+                }
+            }, 100);
+        }
+
+        function setupEventListeners() {
+            const searchInput = document.getElementById('searchInput');
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function() { handleSearch(this.value); });
+            }
+            if (clearSearchBtn) {
+                clearSearchBtn.addEventListener('click', function() {
+                    document.getElementById('searchInput').value = '';
+                    handleSearch('');
+                });
+            }
+
+            const hamburgerToggle = document.getElementById('hamburger-toggle');
+            if (hamburgerToggle) {
+                hamburgerToggle.addEventListener('change', function() {
+                    document.body.style.overflow = this.checked ? 'hidden' : 'auto';
+                });
+            }
+        }
+
+        function initializeEndpointParameters(catIndex, endpointIndex, item) {
+            const paramsContainer = document.getElementById(`params-container-${catIndex}-${endpointIndex}`);
+            if (!paramsContainer) return;
+
+            const method = item.method || "GET";
+            const parameters = item.parameters || {};
+
+            if (Object.keys(parameters).length === 0) {
+                paramsContainer.innerHTML = '';
+                return;
+            }
+
+            let paramsHtml = '';
+            for (const [paramName, paramConfig] of Object.entries(parameters)) {
+                const required = paramConfig.required !== false;
+                const type = paramConfig.type || "string";
+                const example = paramConfig.example || "";
+                const value = paramConfig.value || "";
+                const selection = paramConfig.selection || paramConfig.options || [];
+
+                let inputField = '';
+                if (type === "select") {
+                    const selectedVal = value || (selection.length > 0 ? selection[0] : '');
+                    
+                    let itemsHtml = '';
+                    selection.forEach(opt => {
+                        const activeCls = opt === selectedVal ? 'active' : '';
+                        itemsHtml += `
+                            <div class="nb-select-item ${activeCls}" data-val="${opt}" onclick="selectCustomOption('${catIndex}', '${endpointIndex}', '${paramName}', '${opt}', this)">
+                                <span>${opt}</span>
+                                <i class="fas fa-check text-xs ${opt === selectedVal ? '' : 'hidden'}"></i>
+                            </div>
+                        `;
+                    });
+
+                    inputField = `
+                        <div class="relative w-full">
+                            <input type="hidden" name="${paramName}" id="param-${catIndex}-${endpointIndex}-${paramName}" value="${selectedVal}" ${required ? 'required' : ''}>
+                            <button type="button" class="nb-select-btn" onclick="toggleCustomSelectMenu(this)">
+                                <span class="selected-text">${selectedVal}</span>
+                                <i class="fas fa-chevron-down text-xs transition-transform duration-200"></i>
+                            </button>
+                            <div class="nb-select-menu">
+                                ${itemsHtml}
+                            </div>
+                        </div>
+                    `;
+                } else if (type === "file" || type === "image" || type === "video" || type === "audio") {
+                    inputField = `
+                        <div class="neo-dropzone" id="dropzone-${catIndex}-${endpointIndex}-${paramName}">
+                            <input type="file" name="${paramName}" id="param-${catIndex}-${endpointIndex}-${paramName}" ${required ? 'required' : ''} onchange="handleFileSelectCustom(${catIndex}, ${endpointIndex}, '${paramName}', this)">
+                            <div class="neo-dropzone-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+                            <div class="neo-dropzone-text">Pilih atau Drag File Ke Sini</div>
+                            <div id="file-tag-${catIndex}-${endpointIndex}-${paramName}" class="neo-file-tag hidden"></div>
+                        </div>
+                    `;
+                } else {
+                    const inputType = type === "number" ? "number" : "text";
+                    const placeholder = example ? `Contoh: ${example}` : `Masukkan ${paramName}...`;
+                    inputField = `<input type="${inputType}" name="${paramName}" id="param-${catIndex}-${endpointIndex}-${paramName}" class="form-control-custom text-xs w-full" placeholder="${placeholder}" value="${value}" ${required ? 'required' : ''} autocomplete="off">`;
+                }
+
+                paramsHtml += `
+                    <div>
+                        <label class="block text-black font-extrabold text-xs mb-1 font-mono" for="param-${catIndex}-${endpointIndex}-${paramName}">
+                            ${paramName} ${required ? '<span class="text-red-600">*</span>' : '<span class="text-gray-600 font-semibold">(opsional)</span>'}
+                        </label>
+                        ${inputField}
+                    </div>
+                `;
+            }
+            paramsContainer.innerHTML = paramsHtml;
+
+            if (method === 'GET') {
+                const inputs = paramsContainer.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    input.addEventListener('input', () => updateRequestUrl(catIndex, endpointIndex));
+                    input.addEventListener('change', () => updateRequestUrl(catIndex, endpointIndex));
+                });
+                const urlDisplay = document.getElementById(`url-display-${catIndex}-${endpointIndex}`);
+                if (urlDisplay) {
+                    urlDisplay.dataset.baseUrl = urlDisplay.textContent.trim().split('?')[0];
+                    setTimeout(() => { updateRequestUrl(catIndex, endpointIndex); }, 100);
+                }
+            }
+        }
+
+        function handleFileSelectCustom(catIndex, endpointIndex, paramName, fileInput) {
+            const fileTag = document.getElementById(`file-tag-${catIndex}-${endpointIndex}-${paramName}`);
+            if (fileInput.files && fileInput.files[0] && fileTag) {
+                const file = fileInput.files[0];
+                fileTag.innerHTML = `<i class="fas fa-file"></i> ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} MB)`;
+                fileTag.classList.remove('hidden');
+            } else if (fileTag) {
+                fileTag.classList.add('hidden');
+            }
+        }
+
+        function toggleCustomSelectMenu(btn) {
+            const menu = btn.nextElementSibling;
+            const isOpened = menu.classList.contains('open');
+            
+            document.querySelectorAll('.nb-select-menu').forEach(m => m.classList.remove('open'));
+            document.querySelectorAll('.nb-select-btn i').forEach(i => i.style.transform = '');
+
+            if (!isOpened) {
+                menu.classList.add('open');
+                btn.querySelector('i').style.transform = 'rotate(180deg)';
+            }
+        }
+
+        function selectCustomOption(catIndex, endpointIndex, paramName, val, itemEl) {
+            const hiddenInput = document.getElementById(`param-${catIndex}-${endpointIndex}-${paramName}`);
+            const btn = itemEl.closest('.relative').querySelector('.nb-select-btn');
+            const menu = itemEl.closest('.nb-select-menu');
+
+            if (hiddenInput) hiddenInput.value = val;
+            if (btn) {
+                btn.querySelector('.selected-text').textContent = val;
+                btn.querySelector('i').style.transform = '';
+            }
+
+            menu.querySelectorAll('.nb-select-item').forEach(i => {
+                i.classList.remove('active');
+                i.querySelector('i').classList.add('hidden');
+            });
+
+            itemEl.classList.add('active');
+            itemEl.querySelector('i').classList.remove('hidden');
+            menu.classList.remove('open');
+
+            updateRequestUrl(catIndex, endpointIndex);
+        }
+
+        function handleSearch(searchTerm) {
+            const searchTermLower = (searchTerm || '').toLowerCase().trim();
+            const noResults = document.getElementById('noResults');
+
+            if (!searchTermLower) {
+                applyCategoryFilter(activeCategoryFilter);
+                if (noResults) noResults.classList.add('hidden');
+                updateSearchResultsCount();
+                return;
+            }
+
+            let filteredData = [];
+            const categoriesToSearch = (!activeCategoryFilter || activeCategoryFilter === '')
+                ? originalCategories
+                : originalCategories.filter(cat => cat.name.toLowerCase() === activeCategoryFilter);
+
+            categoriesToSearch.forEach(cat => {
+                if (!cat || !cat.items) return;
+                const filteredItems = cat.items.filter(item => {
+                    if (!item) return false;
+                    return (item.name || '').toLowerCase().includes(searchTermLower) ||
+                           (item.description || '').toLowerCase().includes(searchTermLower) ||
+                           (item.path || '').toLowerCase().includes(searchTermLower);
+                });
+                if (filteredItems.length > 0) {
+                    filteredData.push({ ...cat, items: filteredItems });
+                }
+            });
+
+            if (filteredData.length === 0) {
+                document.getElementById('apiList').innerHTML = '';
+                if (noResults) noResults.classList.remove('hidden');
+            } else {
+                renderAPIData(filteredData);
+                if (noResults) noResults.classList.add('hidden');
+            }
+            updateSearchResultsCount(searchTermLower, filteredData);
+        }
+
+        function updateSearchResultsCount(searchTerm = '', filteredData = null) {
+            const searchResultsCount = document.getElementById('searchResultsCount');
+            const resultsCount = document.getElementById('resultsCount');
+            if (!searchResultsCount || !resultsCount) return;
+            if (!searchTerm) {
+                searchResultsCount.classList.add('hidden');
+                return;
+            }
+            let totalItems = 0;
+            if (filteredData) {
+                filteredData.forEach(cat => { totalItems += (cat.items || []).length; });
+            }
+            resultsCount.textContent = totalItems;
+            searchResultsCount.classList.remove('hidden');
+        }
+
+        function toggleEndpoint(catIndex, endpointIndex, headerEl) {
+            const endpoint = document.getElementById(`endpoint-${catIndex}-${endpointIndex}`);
+            if (endpoint) {
+                endpoint.classList.toggle('open');
+                if (endpoint.classList.contains('open')) {
+                    setTimeout(() => { endpoint.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 300);
+                }
+            }
+        }
+
+        function updateRequestUrl(catIndex, endpointIndex) {
+            const form = document.getElementById(`form-${catIndex}-${endpointIndex}`);
+            const urlDisplay = document.getElementById(`url-display-${catIndex}-${endpointIndex}`);
+            if (!form || !urlDisplay) return { url: '', hasErrors: false };
+
+            let baseUrl = urlDisplay.dataset.baseUrl || urlDisplay.textContent.trim().split('?')[0];
+            const params = new URLSearchParams();
+            form.querySelectorAll('input[type="text"], input[type="number"], input[type="hidden"], select').forEach(input => {
+                if (input.name && input.value.trim()) params.append(input.name, input.value.trim());
+            });
+
+            const queryString = params.toString();
+            const finalUrl = baseUrl + (queryString ? '?' + queryString : '');
+            urlDisplay.textContent = finalUrl;
+            return { url: finalUrl, hasErrors: false };
+        }
+
+        async function executeRequest(catIndex, endpointIndex, method) {
+            const item = originalCategories[catIndex]?.items[endpointIndex];
+            if (!item) return;
+
+            const responseDiv = document.getElementById(`response-${catIndex}-${endpointIndex}`);
+            const responseContent = document.getElementById(`response-content-${catIndex}-${endpointIndex}`);
+            const responseTime = document.getElementById(`response-time-${catIndex}-${endpointIndex}`);
+            const contentTypeBadge = document.getElementById(`content-type-${catIndex}-${endpointIndex}`);
+
+            responseDiv.classList.remove('hidden');
+            responseContent.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-6 text-center w-full">
+                    <div class="loader mb-3"></div>
+                    <p class="text-xs text-black font-mono font-bold">Mengirim request...</p>
+                </div>
+            `;
+
+            const startTime = Date.now();
+            try {
+                let requestOptions = { method: method, headers: { 'Accept': '*/*' } };
+                let requestUrl = '';
+
+                if (method === 'POST' || method === 'PUT') {
+                    const form = document.getElementById(`form-${catIndex}-${endpointIndex}`);
+                    const formData = new FormData();
+                    form.querySelectorAll('input[type="file"]').forEach(input => {
+                        if (input.files[0]) formData.append(input.name, input.files[0]);
+                    });
+                    form.querySelectorAll('input[type="text"], input[type="number"], input[type="hidden"], select').forEach(input => {
+                        if (input.value.trim()) formData.append(input.name, input.value.trim());
+                    });
+                    requestOptions.body = formData;
+                    requestUrl = document.getElementById(`url-display-${catIndex}-${endpointIndex}`).textContent.trim().split('?')[0];
+                } else {
+                    requestUrl = updateRequestUrl(catIndex, endpointIndex).url;
+                }
+
+                const response = await fetch(requestUrl, requestOptions);
+                responseTime.textContent = `${Date.now() - startTime}ms`;
+                const contentType = response.headers.get('content-type') || '';
+                contentTypeBadge.textContent = contentType.split(';')[0] || 'unknown';
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+
+                if (contentType.includes('application/json')) {
+                    const data = await response.json();
+                    responseContent.innerHTML = `<pre class="text-xs font-mono text-black font-bold whitespace-pre-wrap leading-relaxed m-0 p-0 text-left">${JSON.stringify(data, null, 2)}</pre>`;
+                } else if (contentType.includes('image/') || contentType.includes('octet-stream')) {
+                    const blob = await response.blob();
+                    const reader = new FileReader();
+                    reader.readAsDataURL(blob);
+                    reader.onloadend = function() {
+                        const base64data = reader.result;
+                        responseContent.innerHTML = `<img src="${base64data}" class="max-h-80 object-contain block mx-auto rounded-lg border-2 border-black" />`;
+                    };
+                } else if (contentType.includes('video/')) {
+                    const blob = await response.blob();
+                    const blobUrl = URL.createObjectURL(blob);
+                    responseContent.innerHTML = `<video src="${blobUrl}" controls class="max-h-80 w-full object-contain block mx-auto rounded-lg border-2 border-black"></video>`;
+                } else {
+                    const text = await response.text();
+                    responseContent.innerHTML = `<pre class="text-xs font-mono text-black font-bold whitespace-pre-wrap leading-relaxed m-0 p-0 text-left">${text}</pre>`;
+                }
+                showToast('Request berhasil dieksekusi!', 'success');
+            } catch (error) {
+                responseContent.innerHTML = `<div class="text-left py-2 text-red-600 text-xs font-mono font-bold">Error: ${error.message}</div>`;
+                responseTime.textContent = 'Error';
+                showToast('Gagal mengeksekusi request', 'error');
+            }
+        }
+
+        function clearResponse(catIndex, endpointIndex) {
+            const form = document.getElementById(`form-${catIndex}-${endpointIndex}`);
+            const responseDiv = document.getElementById(`response-${catIndex}-${endpointIndex}`);
+            if (form) form.reset();
+            if (responseDiv) responseDiv.classList.add('hidden');
+            showToast('Form dibersihkan', 'info');
+        }
+
+        function copyResponse(catIndex, endpointIndex) {
+            const content = document.getElementById(`response-content-${catIndex}-${endpointIndex}`);
+            if (content) {
+                navigator.clipboard.writeText(content.textContent || content.innerText);
+                showToast('Berhasil disalin ke clipboard!', 'success');
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'toast show';
+            toast.innerHTML = `<i class="fas fa-info-circle text-black"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
